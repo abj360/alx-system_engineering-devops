@@ -1,0 +1,38 @@
+# Serve Web Static
+
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+        server_name _;
+        add_header X-Served-By $hostname;
+        location / {
+                try_files $uri $uri/ =404;
+        }
+        if ($request_filename ~ redirect_me) {
+                rewrite ^ https://youtube.com permanent;
+        }
+        error_page 404 /404.html;
+        location = /404.html {
+                internal;
+        }
+        location = /airbnb-onepage/ {
+                proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
+        }
+        location ~* /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+                proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
+        }
+		location /api {
+				proxy_pass http://127.0.0.1:5002/api;
+		}
+		# Configure /2-hbnb route of AirBnB_clone_v4 as root location
+    	location / {
+        	proxy_pass http://127.0.0.1:5003/2-hbnb;
+    	}
+
+    	# Serve static content for AirBnB_clone_v4
+    	location /static {
+        	proxy_pass http://127.0.0.1:5003;
+    	}
+}

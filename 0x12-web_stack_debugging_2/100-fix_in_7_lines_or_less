@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Configure container to run `nginx` as user `nginx` listening on all active IPs on port `8080`
+sed -i "s/#user.*/user nginx;/" /etc/nginx/nginx.conf
+sed -i "s/80/8080/" /etc/nginx/sites-enabled/default
+chmod 777 /etc/nginx/nginx.conf /usr/sbin/nginx
+pkill apache2
+su -c "service nginx start" nginx
